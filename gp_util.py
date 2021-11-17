@@ -11,15 +11,15 @@ import sys
 
 
 class pair(object):
-    def __init__(self,v0,v1):
-        self.v0 = v0
-        self.v1 = v1
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
     
     def __eq__(self,other):
-        return self.v0==other.v0 and self.v1==other.v1
+        return self.x==other.x and self.y==other.y
     
     def __hash__(self):
-        return (self.v0+self.v1)*(self.v0+self.v1+1)//2+self.v1
+        return (self.x+self.y)*(self.x+self.y+1)//2+self.y
 
 def parser(filepath):
     with open(filepath, "r") as f:
@@ -39,7 +39,10 @@ def objective_function(graph, solution):
     
     
 def random_solution(n):
-    return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8")     
+    return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8") 
+
+def random_neighbor_swap(solution, part1, part2, cost, graph):
+    pass    
 
 def main():
     pass
