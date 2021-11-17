@@ -55,9 +55,6 @@ def random_neighbor_swap(graph, solution, part1, part2, cost):
     indx2 = random.randrange(len(part2))
     j = part2[indx2]
     
-    part1[indx1] = j
-    part2[indx2] = i
-    
     new_solution = np.copy(solution)
     new_solution[i] = False
     new_solution[j] = True
@@ -66,9 +63,9 @@ def random_neighbor_swap(graph, solution, part1, part2, cost):
     
     new_cost = cost + np.dot(graph[i],new_solution) - np.dot(graph[i],inv_new_solution) 
     new_cost += np.dot(graph[j],inv_new_solution) - np.dot(graph[j],new_solution) 
-    new_cost -= 2*graph[i][j] 
+    new_cost -= 2*graph[i][j]
     
-    return new_solution, new_cost
+    return new_solution, new_cost, indx1, indx2
     
 
 def main():

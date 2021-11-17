@@ -11,16 +11,21 @@ import gp_local_search as ls
 
 import numpy as np
 
+
+def main2():
+    n, graph = util.parser('Cebe.bip.n10.1')
+    print(ls.mean_delta(graph))
+
 def main():
     
     n, graph = util.parser('Cebe.bip.n10.1')
     
     solution = util.random_solution(n) 
     
-    temp = 0.5
+    temp = 65
     alpha = 0.99
     chain_max = 1
-    reject_max = 10
+    reject_max = 50
     
     new_solution, new_cost = ls.simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max)
         
