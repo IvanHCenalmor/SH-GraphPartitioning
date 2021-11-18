@@ -6,7 +6,7 @@ Created on Wed Nov 17 15:54:14 2021
 @author: cocomputer
 """
 
-import  gp_util as util
+import gp_util as util
 import gp_local_search as ls
 
 import numpy as np
@@ -14,7 +14,13 @@ import numpy as np
 
 def main2():
     n, graph = util.parser('Cebe.bip.n10.1')
-    print(ls.mean_delta(graph))
+    
+    solution = util.random_solution(n)
+    
+    new_solution, new_cost = ls.local_search(graph,solution)
+    
+    print(util.objective_function(graph, new_solution))
+    print(new_cost)
 
 def main():
     

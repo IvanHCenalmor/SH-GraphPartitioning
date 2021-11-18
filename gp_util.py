@@ -46,48 +46,43 @@ def objective_function2(graph, solution):
     return res
 
 def random_solution(n):
-    return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8") 
+    return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8")
 
-def random_neighbor_swap(graph, solution, part1, part2, cost):
-    
-    indx1 = random.randrange(len(part1))
-    i = part1[indx1]
-    indx2 = random.randrange(len(part2))
-    j = part2[indx2]
-    
+
+def neighbour(graph, solution, v0, v1, cost):
     new_solution = np.copy(solution)
-    new_solution[i] = False
-    new_solution[j] = True
+    new_solution[v0] = True
+    new_solution[v1] = False
     
     inv_new_solution = ~new_solution
     
-    new_cost = cost + np.dot(graph[i],new_solution) - np.dot(graph[i],inv_new_solution) 
-    new_cost += np.dot(graph[j],inv_new_solution) - np.dot(graph[j],new_solution) 
-    new_cost -= 2*graph[i][j]
+    new_cost = cost + np.dot(graph[v0],inv_new_solution) - np.dot(graph[v0],new_solution) 
+    new_cost += np.dot(graph[v1],new_solution) - np.dot(graph[v1],inv_new_solution) 
+    new_cost -= 2*graph[v0][v1]
     
-    return new_solution, new_cost, indx1, indx2
-    
+    return new_solution, new_cost
 
-def main():
+def random_neighbor(graph, solution, part0, part1, cost):
+    i0 = random.randrange(len(part0))
+    i1 = random.randrange(len(part1))
     
-    n, graph = parser('Cebe.bip.n10.1')
+    new_solution, new_cost = neighbour(graph,solution,part0[i0],part1[i1],cost)
     
-    solution = random_solution(n) 
+    return new_solution, new_cost, i0, i1
     
-    cost = objective_function(graph, solution)
+def improved_random_neighbor(graph, solution, part0, part1, cost):
+    rindxs0 = list(range(len(part0)))
+    rindxs1 = list(range(len(part1)))   
     
-    part1 = np.where(solution)[0]
-    part2 = np.where(~solution)[0]
-        
-    for i in range(100):
-        
-        solution, cost = random_neighbor_swap(graph, solution, part1, part2, cost)
-        
-        print()
-        #print(objective_function(graph, solution))
-        #print(cost)
-        print(part1)
-        print(part2)
-
-if __name__=="__main__":
-    main()
+    random.shuffle(rindxs0)
+    random.shuffle(rindxs1)
+    
+    for i0 in rindxs0:
+        for i1 in rindxs1:
+            new_solution, new_cost = neighbour(graph,solution,part0[i0],part1[i1],cost)
+            
+            if new_cost<cost:
+                part0[i0], part1[i1] = part1[i1], part0[i0]
+                return new_solution, new_cost
+            
+    return np.array([]), 0

@@ -13,17 +13,31 @@ import numpy as np
 
 import time
 
+def local_search(graph, solution):
+    cost = util.objective_function(graph,solution)
+    part0 = np.where(~solution)[0]
+    part1 = np.where(solution)[0]
+    
+    new_solution, new_cost = util.improved_random_neighbor(graph,solution,part0,part1,cost)
+    
+    while new_solution.size!=0:
+        solution, cost = new_solution, new_cost
+        new_solution, new_cost = util.improved_random_neighbor(graph,solution,part0,part1,cost)
+        
+    return solution, cost
+    
+
 def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
     reject_size = 0
     cost = util.objective_function(graph,solution)
+    part0 = np.where(~solution)[0]
     part1 = np.where(solution)[0]
-    part2 = np.where(~solution)[0]
     
     while reject_size<reject_max:
         chain_size = 0
         
         while chain_size<chain_max and reject_size<reject_max:
-            new_solution, new_cost, i1, i2 = util.random_neighbor_swap(graph,solution,part1,part2,cost)
+            new_solution, new_cost, i0, i1 = util.random_neighbor(graph,solution,part0,part1,cost)
             delta = new_cost-cost
             
             print("\n")
@@ -34,7 +48,7 @@ def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
             print("c: {}".format(temp))
             
             if delta<0 or math.exp(-1*delta/temp)>random.random():
-                part1[i1], part2[i2] = part2[i2], part1[i1]
+                part0[i0], part1[i1] = part1[i1], part0[i0]
                 reject_size = 0
                 solution = new_solution
                 cost = new_cost
