@@ -48,6 +48,44 @@ def objective_function2(graph, solution):
 def random_solution(n):
     return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8")
 
+def greedy_solution(n, graph):
+    possible_nodes = list(range(n))
+    not_used = np.ones(n, dtype=bool)
+    solution = np.zeros(n, dtype=bool)
+    
+    first_indx = random.randint(0, n-1)
+    first_node = possible_nodes.pop(first_indx)
+    
+    not_used[first_node] = False
+    solution[first_node] = True
+    
+    dist_p1 = np.array(graph[first_node]) 
+    dist_p2 = np.zeros(n)
+    
+    factores = 1/dist_p1[not_used]
+    
+    for i in range(n-2):
+        if i % 2 == 0:
+            prob = factores / np.sum(factores)
+            node_indx = np.random.choice(list(range(len(possible_nodes))), 1, p=prob)[0]
+            node = possible_nodes.pop(node_indx)
+            
+            not_used[node] = False
+            
+            dist_p2 += graph[node]
+            factores = dist_p2[not_used]/dist_p1[not_used]
+        else:
+            prob = factores / np.sum(factores)
+            node_indx = np.random.choice(list(range(len(possible_nodes))), 1, p=prob)[0]
+            node = possible_nodes.pop(node_indx)
+            
+            not_used[node] = False
+            solution[node] = True
+            
+            dist_p1 += graph[node]
+            factores = dist_p1[not_used]/dist_p2[not_used]
+
+    return solution
 
 def neighbour(graph, solution, v0, v1, cost):
     new_solution = np.copy(solution)
@@ -86,3 +124,7 @@ def improved_random_neighbor(graph, solution, part0, part1, cost):
                 return new_solution, new_cost
             
     return np.array([]), 0
+
+
+n, graph = parser('Cebe.bip.n10.1')
+print(greedy_solution(n, graph))

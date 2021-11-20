@@ -33,6 +33,8 @@ def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
     part0 = np.where(~solution)[0]
     part1 = np.where(solution)[0]
     
+    best_solution, best_cost = solution, cost
+    
     while reject_size<reject_max:
         chain_size = 0
         
@@ -53,6 +55,9 @@ def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
                 solution = new_solution
                 cost = new_cost
                 print("Accepted")
+                if cost < best_cost:
+                    best_solution = solution
+                    best_cost = cost
             
             else: 
                 reject_size += 1
@@ -62,7 +67,7 @@ def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
         
         temp *= alpha
         
-    return solution, cost
+    return best_solution, best_cost
                 
 def mean_delta(graph):
     deltas = []

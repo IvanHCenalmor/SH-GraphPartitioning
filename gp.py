@@ -11,6 +11,24 @@ import gp_local_search as ls
 
 import numpy as np
 
+import itertools
+
+def main3():
+    n, graph = util.parser('Cebe.bip.n10.1')
+    
+    best_sol = [True]*(n//2)+[False]*(n//2)
+    best_cost = util.objective_function(graph, best_sol)
+    
+    permutations = itertools.permutations(best_sol)
+    
+    for p in permutations:
+        cost = util.objective_function(graph,p)
+        if cost < best_cost:
+            best_sol = p
+            best_cost = cost
+
+    print('Best solution: {}'.format(best_sol))
+    print('Best cost: {}'.format(best_cost))
 
 def main2():
     n, graph = util.parser('Cebe.bip.n10.1')
