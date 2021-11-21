@@ -27,8 +27,10 @@ def local_search(graph, solution):
     return solution, cost
     
 
-def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
+def simulated_annealing(graph,temp,alpha,chain_max,reject_max):
     reject_size = 0
+    
+    solution = util.random_solution(len(graph))
     cost = util.objective_function(graph,solution)
     part0 = np.where(~solution)[0]
     part1 = np.where(solution)[0]
@@ -45,7 +47,7 @@ def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
             print("\n")
             print("Current solution: {}".format(solution))
             print("Objective function: {}".format(cost))
-            print(" Proposed solution: {}".format(new_solution))
+            print("Proposed solution: {}".format(new_solution))
             print("Proposed objective function: {}".format(new_cost))
             print("c: {}".format(temp))
             
@@ -69,19 +71,19 @@ def simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max):
         
     return best_solution, best_cost
                 
-def mean_delta(graph):
+def temperature_estimator(graph, sample_size = 10000, accept_rate = 0.5):
     deltas = []
     
-    for i in range(100):
-        rs = util.random_solution(len(graph))
-        part1 = np.where(rs)[0]
-        part2 = np.where(~rs)[0]
-        cost = util.objective_function(graph,rs)
+    while len(deltas)<sample_size:
+        solution = util.random_solution(len(graph))
+        cost = util.objective_function(graph,solution)
+        part0 = np.where(~solution)[0]
+        part1 = np.where(solution)[0]
         
-        for j in range(100):
-            _, rc, _, _ = util.random_neighbor_swap(graph, rs, part1, part2, cost)
-            delta = rc - cost
+        _, new_cost, _, _ = util.random_neighbor(graph,solution,part0,part1,cost)
+        
+        delta = new_cost-cost
+        
+        if delta>=0: deltas.append(delta)
             
-            if delta>0: deltas.append(delta)
-            
-    return sum(deltas)/len(deltas)
+    return -1*sum(deltas)/len(deltas)/math.log(accept_rate)

@@ -33,25 +33,22 @@ def main3():
 def main2():
     n, graph = util.parser('Cebe.bip.n10.1')
     
-    solution = util.random_solution(n)
+    solution = util.greedy_solution(n, graph)
     
     new_solution, new_cost = ls.local_search(graph,solution)
     
-    print(util.objective_function(graph, new_solution))
+    print(new_solution)
     print(new_cost)
 
 def main():
-    
     n, graph = util.parser('Cebe.bip.n10.1')
     
-    solution = util.random_solution(n) 
-    
-    temp = 65
+    temp = ls.temperature_estimator(graph)
     alpha = 0.99
     chain_max = 1
     reject_max = 50
     
-    new_solution, new_cost = ls.simulated_annealing(graph,solution,temp,alpha,chain_max,reject_max)
+    new_solution, new_cost = ls.simulated_annealing(graph,temp,alpha,chain_max,reject_max)
         
     print(util.objective_function(graph, new_solution))
     print(new_cost)

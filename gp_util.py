@@ -124,7 +124,3 @@ def improved_random_neighbor(graph, solution, part0, part1, cost):
                 return new_solution, new_cost
             
     return np.array([]), 0
-
-
-n, graph = parser('Cebe.bip.n10.1')
-print(greedy_solution(n, graph))
