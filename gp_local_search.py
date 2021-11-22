@@ -27,13 +27,13 @@ def local_search(graph, solution):
     return solution, cost
 
 
-def grasp(graph, n_times):
+def grasp(graph, k, n_times):
     
-    init_solution = util.gra_solution(graph)
+    init_solution = util.constructive_method(graph, k)
     best_solution, best_cost = local_search(graph,init_solution)
     
     for _ in range(n_times-1):
-        init_solution = util.gra_solution(graph)
+        init_solution = util.constructive_method(graph, k)
         solution, cost = local_search(graph,init_solution)
         if cost < best_cost:
             best_solution = solution

@@ -48,7 +48,7 @@ def objective_function2(graph, solution):
 def random_solution(n):
     return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8")
 
-def gra_solution(graph):
+def constructive_method(graph, k):
     n = len(graph)
     
     possible_nodes = list(range(n))
@@ -64,28 +64,28 @@ def gra_solution(graph):
     dist_p1 = np.array(graph[first_node]) 
     dist_p2 = np.zeros(n)
     
-    factores = 1/dist_p1[not_used]
+    factors = 1/dist_p1[not_used]
     
     for i in range(n-2):
-        if i % 2 == 0:
-            prob = factores / np.sum(factores)
-            node_indx = np.random.choice(list(range(len(possible_nodes))), 1, p=prob)[0]
-            node = possible_nodes.pop(node_indx)
-            
+        sorted_factors = sorted(enumerate(factors), key=lambda x:x[1], reverse=True)
+        sorted_factors = sorted_factors[:min(k,len(sorted_factors))]
+        f_indx, f = zip(*sorted_factors)
+        
+        prob = f / np.sum(f)
+        node_indx = np.random.choice(f_indx, 1, p=prob)[0]
+        node = possible_nodes.pop(node_indx)
+        
+        if i % 2 == 0:  
             not_used[node] = False
             
             dist_p2 += graph[node]
-            factores = dist_p2[not_used]/dist_p1[not_used]
+            factors = dist_p1[not_used]/dist_p2[not_used]
         else:
-            prob = factores / np.sum(factores)
-            node_indx = np.random.choice(list(range(len(possible_nodes))), 1, p=prob)[0]
-            node = possible_nodes.pop(node_indx)
-            
             not_used[node] = False
             solution[node] = True
             
             dist_p1 += graph[node]
-            factores = dist_p1[not_used]/dist_p2[not_used]
+            factors = dist_p2[not_used]/dist_p1[not_used]
 
     return solution
 
