@@ -27,9 +27,19 @@ def local_search(graph, solution):
     return solution, cost
 
 
-def grasp(graph):
-    solution = util.gra_solution(graph)
-    return local_search(graph,solution)
+def grasp(graph, n_times):
+    
+    init_solution = util.gra_solution(graph)
+    best_solution, best_cost = local_search(graph,init_solution)
+    
+    for _ in range(n_times-1):
+        init_solution = util.gra_solution(graph)
+        solution, cost = local_search(graph,init_solution)
+        if cost < best_cost:
+            best_solution = solution
+            best_cost = cost
+        
+    return best_solution, best_cost
     
     
 def simulated_annealing(graph,temp,alpha,chain_max,reject_max):

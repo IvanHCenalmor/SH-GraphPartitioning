@@ -39,7 +39,7 @@ def main3():
 def main2():
     n, graph = util.parser('Cebe.bip.n10.1')
     
-    new_solution, new_cost = ls.grasp(graph)
+    new_solution, new_cost = ls.grasp(graph, 50)
     
     print(new_solution)
     print(new_cost)
@@ -58,4 +58,4 @@ def main():
     print(new_cost)
 
 if __name__=="__main__":
-    main()
+    main2()
