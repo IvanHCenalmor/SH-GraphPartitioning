@@ -48,7 +48,9 @@ def objective_function2(graph, solution):
 def random_solution(n):
     return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8")
 
-def greedy_solution(n, graph):
+def gra_solution(graph):
+    n = len(graph)
+    
     possible_nodes = list(range(n))
     not_used = np.ones(n, dtype=bool)
     solution = np.zeros(n, dtype=bool)

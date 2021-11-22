@@ -25,8 +25,13 @@ def local_search(graph, solution):
         new_solution, new_cost = util.improved_random_neighbor(graph,solution,part0,part1,cost)
         
     return solution, cost
-    
 
+
+def grasp(graph):
+    solution = util.gra_solution(graph)
+    return local_search(graph,solution)
+    
+    
 def simulated_annealing(graph,temp,alpha,chain_max,reject_max):
     reject_size = 0
     

@@ -13,6 +13,12 @@ import numpy as np
 
 import itertools
 
+def main4():
+    n, graph = util.parser('Cebe.bip.n10.1')
+    
+    print(ls.temperature_estimator(graph, accept_rate=0.3))
+
+
 def main3():
     n, graph = util.parser('Cebe.bip.n10.1')
     
@@ -33,9 +39,7 @@ def main3():
 def main2():
     n, graph = util.parser('Cebe.bip.n10.1')
     
-    solution = util.greedy_solution(n, graph)
-    
-    new_solution, new_cost = ls.local_search(graph,solution)
+    new_solution, new_cost = ls.grasp(graph)
     
     print(new_solution)
     print(new_cost)
