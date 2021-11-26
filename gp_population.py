@@ -35,17 +35,37 @@ def ant_colony_opt(graph, population, generations, k_best, dissipation_factor):
             
     return best_sol, best_cost
 
-def ant_solution(graph, pheromones):
-    n = len(graph)
+
+def ant_solution(graph, pheromones, initial_vertex, alpha, e = 0.1):
+    solution = [initial_vertex]
+    cost = 0
     
-    solution = np.zeros(n, type=bool)
-    # In order to avoid repeated solutions, first vertex will
-    # always be in the True partition
-    solution[0] = True
+    dist_p0 = graph[initial_vertex] + e
+    dist_p1 = np.zeros(len(graph)) + e
     
-    dist_p1 = graph[0]
+    not_visited = np.ones(len(graph),dtype=bool)
+    not_visited[initial_vertex] = False
     
-    return None
+    for i in range(1,len(graph)):
+        verts = np.array(range(len(graph)))[not_visited]
+        f0 = dist_p0[not_visited]
+        f1 = dist_p1[not_visited]
+        phe = graph[solution[-1]][not_visited]
+        
+        prob = phe**alpha * (f1/f0 if i&1 else f0/f1)
+        prob = prob/sum(prob)
+        
+        vertex = np.random.choice(verts,size=1,p=prob)
+        not_visited[vertex] = False
+        solution.append(vertex)
+        
+        if i&1: dist_p1 += graph[vertex]
+        else: dist_p0 += graph[vertex]
+        
+        cost += graph[solution[-1]][vertex]
+           
+    return solution, cost
+
 
 def increment_pheromone(solutions, costs, n):
     
