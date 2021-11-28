@@ -8,10 +8,29 @@ Created on Wed Nov 17 15:54:14 2021
 
 import gp_util as util
 import gp_local_search as ls
+import gp_population as pop
 
 import numpy as np
-
+import time
 import itertools
+
+datasets = ['Cebe.bip.n10.1','Cebe.bip.n10.2','Cebe.bip.n10.3','Cebe.bip.n10.4', 'Cebe.bip.n10.5',
+            'Cebe.bip.n20.1','Cebe.bip.n20.2','Cebe.bip.n20.3','Cebe.bip.n20.4', 'Cebe.bip.n20.5',
+            'G.sub.500', 'G124.02', 'G124.16', 'G250.02', 'G250.04', 'G250.08', 'G500.04', 'G500.05',
+            'G1000.02', 'G1000.005', 'G1000.0025']
+
+def main5():
+    for d in datasets:
+        n, graph = util.parser(d)
+        #n, graph = util.parser('Cebe.bip.n10.1')
+        init_time = time.time()
+        best_sol, best_cost = pop.ant_colony_opt(graph, generations=1000, k_best=n//2, dissipation_factor=0.02, 
+                                                 alpha=0.5, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
+        print('---{}---'.format(d))
+        print('Time: {}'.format(time.time() - init_time))
+        print('Best solution: {}'.format(best_sol))
+        print('Best cost: {}'.format(best_cost))
+        print()
 
 def main4():
     n, graph = util.parser('Cebe.bip.n10.1')
@@ -20,7 +39,7 @@ def main4():
 
 
 def main3():
-    n, graph = util.parser('Cebe.bip.n10.1')
+    n, graph = util.parser('Cebe.bip.n10.2')
     
     best_sol = [True]*(n//2)+[False]*(n//2)
     best_cost = util.objective_function(graph, best_sol)
@@ -37,7 +56,7 @@ def main3():
     print('Best cost: {}'.format(best_cost))
 
 def main2():
-    n, graph = util.parser('Cebe.bip.n10.1')
+    n, graph = util.parser('G124.16')
     
     new_solution, new_cost = ls.grasp(graph, 3, 50)
     
@@ -58,4 +77,4 @@ def main():
     print(new_cost)
 
 if __name__=="__main__":
-    main2()
+    main5()

@@ -21,10 +21,21 @@ class pair(object):
         return (self.x+self.y)*(self.x+self.y+1)//2+self.y
 
 def parser(filepath):
-    with open(filepath, "r") as f:
-        n = int(f.readline())
-        m = [[int(i) for i in line.split('   ')[:-1]] for line in f.readlines()]
-        return n, np.array(m)
+    with open("data/{}".format(filepath), "r") as f:
+        if filepath[0] == 'C':
+                n = int(f.readline())
+                m = [[int(i) for i in line.split('   ')[:-1]] for line in f.readlines()]
+        else:
+                first_line = f.readline()[:-1].split(' ')
+                n = int(first_line[0])
+                m = np.zeros((n,n))
+                for i,line in enumerate(f.readlines()):
+                    for j in line[:-1].split(' '):
+                        if(j):
+                            m[i,int(j)-1] += 1
+                    
+    return n, np.array(m)
+                
 
 def objective_function(graph, solution):
     
@@ -48,7 +59,7 @@ def objective_function2(graph, solution):
 def random_solution(n):
     return np.array(random.sample([True]*(n//2)+[False]*(n//2),n),dtype="bool8")
 
-def constructive_method(graph, k):
+def constructive_method(graph, k, e=0.01):
     n = len(graph)
     
     possible_nodes = list(range(n))
@@ -61,8 +72,8 @@ def constructive_method(graph, k):
     not_used[first_node] = False
     solution[first_node] = True
     
-    dist_p1 = np.array(graph[first_node]) 
-    dist_p2 = np.zeros(n)
+    dist_p1 = graph[first_node] + e
+    dist_p2 = np.zeros(n) + e
     
     factors = 1/dist_p1[not_used]
     
