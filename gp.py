@@ -19,18 +19,27 @@ datasets = ['Cebe.bip.n10.1','Cebe.bip.n10.2','Cebe.bip.n10.3','Cebe.bip.n10.4',
             'G.sub.500', 'G124.02', 'G124.16', 'G250.02', 'G250.04', 'G250.08', 'G500.04', 'G500.05',
             'G1000.02', 'G1000.005', 'G1000.0025']
 
-def main5():
+def main6():
     for d in datasets:
         n, graph = util.parser(d)
         #n, graph = util.parser('Cebe.bip.n10.1')
         init_time = time.time()
-        best_sol, best_cost = pop.ant_colony_opt(graph, generations=1000, k_best=n//2, dissipation_factor=0.02, 
+        best_sol, best_cost = pop.ant_colony_opt(graph, generations=100, k_best=n//2, dissipation_factor=0.02, 
                                                  alpha=0.5, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
         print('---{}---'.format(d))
         print('Time: {}'.format(time.time() - init_time))
         print('Best solution: {}'.format(best_sol))
         print('Best cost: {}'.format(best_cost))
         print()
+
+def main5():
+    n, graph = util.parser('G124.02')
+    
+    init_time = time.time()
+    best_sol, best_cost = pop.ant_colony_opt(graph, generations=100, k_best=n//2, dissipation_factor=0.02, 
+                                             alpha=0.5, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
+    print('Time: {}'.format(time.time() - init_time))
+        
 
 def main4():
     n, graph = util.parser('Cebe.bip.n10.1')
