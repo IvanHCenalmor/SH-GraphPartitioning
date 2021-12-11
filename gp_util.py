@@ -9,6 +9,9 @@ import numpy as np
 import random
 import sys
 
+evals = 0
+max_evals = 10000
+
 class pair(object):
     def __init__(self,x,y):
         self.x = x
@@ -38,6 +41,8 @@ def parser(filepath):
                 
 
 def objective_function(graph, solution):
+    global evals
+    evals += 1
     
     aux_sol = np.array([solution])
     
@@ -48,6 +53,9 @@ def objective_function(graph, solution):
     return np.sum(graph*W)/2    
     
 def objective_function2(graph, solution):
+    global evals
+    evals += 1
+    
     res = 0
     
     for i in range(0,len(graph)-1):
@@ -75,7 +83,7 @@ def constructive_method(graph, k, e=0.01):
     dist_p1 = graph[first_node] + e
     dist_p2 = np.zeros(n) + e
     
-    factors = 1/dist_p1[not_used]
+    factors = dist_p2[not_used]/dist_p1[not_used]
     
     for i in range(n-2):
         sorted_factors = sorted(enumerate(factors), key=lambda x:x[1], reverse=True)
@@ -101,6 +109,9 @@ def constructive_method(graph, k, e=0.01):
     return solution
 
 def neighbour(graph, solution, v0, v1, cost):
+    global evals
+    evals += 1
+    
     new_solution = np.copy(solution)
     new_solution[v0] = True
     new_solution[v1] = False
