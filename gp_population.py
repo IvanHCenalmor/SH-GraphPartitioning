@@ -53,7 +53,7 @@ def ant_colony_opt(graph, generations, k_best, population_size, dissipation_fact
             best_cost = k_costs[0]
         
         pheromones = np.maximum(min_phe_matrix, pheromones*(1 - dissipation_factor))
-        pheromones = np.minimum(max_phe_matrix, pheromones+increment_pheromone(k_pop, k_costs, n)) 
+        pheromones = np.minimum(max_phe_matrix, pheromones+increment_pheromone(k_pop, k_costs, n, dissipation_factor)) 
         
     return best_sol, best_cost
 
@@ -94,7 +94,7 @@ def ant_solution(graph, pheromones, initial_vertex, beta, e = 0.1):
            
     return solution, cost
 
-def increment_pheromone(solutions, costs, n):
+def increment_pheromone(solutions, costs, n, dissipation_factor):
     
     increment = np.zeros((n,n))
 
@@ -102,6 +102,9 @@ def increment_pheromone(solutions, costs, n):
         for i in range(len(sol)-1):
             increment[sol[i],sol[i+1]] += 1/c
         increment[sol[0], sol[-1]] += 1/c
+    
+    increment /= np.amax(increment)
+    increment *= 2*dissipation_factor
         
     increment += increment.transpose()
     
