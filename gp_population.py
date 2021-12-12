@@ -7,6 +7,7 @@ Created on Thu Nov 25 11:06:33 2021
 """
 
 from multiprocessing import Process, Queue
+import functools 
 import numpy as np 
 import math
 import random
@@ -14,7 +15,7 @@ import random
 import gp_util as util
 
 def ant_colony_opt(graph, generations, k_best, population_size, dissipation_factor, 
-                   alpha, e = 0.1, min_pheromone = 0, max_pheromone = 1):
+                   beta, e = 0.1, min_pheromone = 0, max_pheromone = 1):
     n = len(graph)
         
     assert population_size >= k_best
@@ -33,14 +34,14 @@ def ant_colony_opt(graph, generations, k_best, population_size, dissipation_fact
         population = random.sample(range(n), population_size)
         
         for i in population:
-            p = Process(target=ant_solution_queue, args=(graph, pheromones, i, alpha, q, e,))
+            p = Process(target=ant_solution_queue, args=(graph, pheromones, i, beta, q, e,))
             p.start()
             
         pop_costs=[]
         for _ in range(population_size):
             pop_costs.append(q.get())
         
-        #pop_costs = [ant_solution(graph, pheromones, i, alpha, e) for i in population]
+        #pop_costs = [ant_solution(graph, pheromones, i, beta, e) for i in population]
         
         sorted_pop = sorted(pop_costs, key=lambda x:x[1])
         sorted_pop = sorted_pop[:k_best]
@@ -56,10 +57,10 @@ def ant_colony_opt(graph, generations, k_best, population_size, dissipation_fact
         
     return best_sol, best_cost
 
-def ant_solution_queue(graph, pheromones, initial_vertex, alpha, q, e = 0.1):
-    q.put(ant_solution(graph, pheromones, initial_vertex, alpha, e))
+def ant_solution_queue(graph, pheromones, initial_vertex, beta, q, e = 0.1):
+    q.put(ant_solution(graph, pheromones, initial_vertex, beta, e))
 
-def ant_solution(graph, pheromones, initial_vertex, alpha, e = 0.1):
+def ant_solution(graph, pheromones, initial_vertex, beta, e = 0.1):
     solution = [initial_vertex]
     bool_solution = np.zeros(len(graph), dtype=bool)
     
@@ -75,7 +76,7 @@ def ant_solution(graph, pheromones, initial_vertex, alpha, e = 0.1):
         f1 = dist_p1[not_visited]
         phe = pheromones[solution[-1]][not_visited]
         
-        prob = phe**alpha * (f1/f0 if i&1 else f0/f1)
+        prob = phe * (f1/f0 if i&1 else f0/f1)**beta
         prob = prob/sum(prob)
         
         vertex = np.random.choice(verts,size=1,p=prob)[0]

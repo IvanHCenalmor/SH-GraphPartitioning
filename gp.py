@@ -25,7 +25,7 @@ def main6():
         #n, graph = util.parser('Cebe.bip.n10.1')
         init_time = time.time()
         best_sol, best_cost = pop.ant_colony_opt(graph, generations=100, k_best=n//2, population_size=int(n*0.75), dissipation_factor=0.02, 
-                                                 alpha=0.5, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
+                                                 beta=3/4, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
         print('---{}---'.format(d))
         print('Time: {}'.format(time.time() - init_time))
         print('Best solution: {}'.format(best_sol))
@@ -36,8 +36,8 @@ def main5():
     n, graph = util.parser('G124.02')
     
     init_time = time.time()
-    best_sol, best_cost = pop.ant_colony_opt(graph, generations=100, k_best=n//2, dissipation_factor=0.02, 
-                                             alpha=0.5, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
+    best_sol, best_cost = pop.ant_colony_opt(graph, generations=100, k_best=n//2, population_size=n, dissipation_factor=0.02, 
+                                             beta=3/4, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
     print('Time: {}'.format(time.time() - init_time))
         
     
@@ -119,4 +119,4 @@ def load():
     print(x)
 
 if __name__=="__main__":
-    load()
+    main5()
