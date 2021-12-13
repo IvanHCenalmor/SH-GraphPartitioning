@@ -35,12 +35,19 @@ def main6():
 def main5():
     n, graph = util.parser('G250.02')
     
-    init_time = time.time()
-    best_sol, best_cost = pop.ant_colony_opt(graph, generations=20, k_best=25, population_size=100, dissipation_factor=0.05, 
-                                             beta=3/4, e = 0.1, min_pheromone = 0.05, max_pheromone = 1)
+    normalized_graph = graph/np.amax(graph)
     
-    print(best_cost)
-    print('Time: {}'.format(time.time() - init_time))
+    for i in [0.005, 0.01,0.05,0.1,0.15]:
+        print(i)
+        init_time = time.time()
+        best_sol, _ = pop.ant_colony_opt(normalized_graph, generations=20, k_best=25, population_size=100, dissipation_factor=i, 
+                                                 beta=3/4, e = 0.1, min_pheromone = 0.05, max_pheromone = 1)
+        
+        best_sol = pop.permutation_to_solution(best_sol)       
+        best_cost = util.objective_function(graph, best_sol)
+        
+        print(best_cost)
+        print('Time: {}'.format(time.time() - init_time))
         
     
 def main4():
@@ -61,15 +68,22 @@ def main4():
     print('Best cost: {}'.format(best_cost))
 
 def aco_test(g):
+    
+    normalized_graph = g/np.amax(g)
+    
     n = min(len(g), 100)
     generations = util.max_evals//n
     
-    best_sol, best_cost = pop.ant_colony_opt(g, generations=generations, k_best=n//5, population_size=n, dissipation_factor=0.05, 
-                                             beta=3/4, e = 0.1, min_pheromone = 0.05, max_pheromone = 1)
+    best_sol, _ = pop.ant_colony_opt(normalized_graph, generations=generations, k_best=n//5, 
+                                     population_size=n, dissipation_factor=0.05, 
+                                     beta=3/4, e = 0.1, min_pheromone = 0.05, max_pheromone = 1)
+    
+    best_cost = util.objective_function(g, best_sol)
+    
     return best_cost    
 
 def ms_test(g):    
-    best_sol, best_cost = ls.multistart(g, 100)
+    best_sol, best_cost = ls.multistart(g, 100000)
     
     #print('Best solution: {}'.format(best_sol))
     #print('Best cost: {}'.format(best_cost))
@@ -79,7 +93,7 @@ def ms_test(g):
     return best_cost
 
 def gr_test(g):
-    best_sol, best_cost = ls.grasp(g, len(g)//5, 100)
+    best_sol, best_cost = ls.grasp(g, len(g)//5, 100000)
     
     #print('Best solution: {}'.format(new_solution))
     #print('Best cost: {}'.format(new_cost))
@@ -91,7 +105,7 @@ def gr_test(g):
 def sa_test(g,temp):
     alpha = 0.99
     chain_max = 1
-    reject_max = 50
+    reject_max = 5*len(g)
     
     best_sol, best_cost = ls.simulated_annealing(g,temp,alpha,chain_max,reject_max)
 
@@ -102,31 +116,31 @@ def sa_test(g,temp):
     
     return best_cost
 
-def tests():
+def tests():            
     for g_str in datasets:
         n, graph = util.parser(g_str)
         
-        #temp = ls.temperature_estimator(graph)
+        temp = ls.temperature_estimator(graph)
         util.evals = 0
     
         costs = []
         evals = []
         times = []
         
-        for _ in range(50):
+        for _ in range(10):
             init_time = time.time()
-            costs.append(aco_test(graph))
+            costs.append(sa_test(graph,temp))
             times.append(time.time()-init_time)
             evals.append(util.evals)
             util.evals = 0
         
         results = np.array((costs,evals,times))
-        np.save("tests/ant_colony_optimization/evals10k/{}.npy".format(g_str),results)   
-        
+        np.save("tests/simulated_annealing/evals10k/{}.npy".format(g_str),results)   
+            
 def load():
-    x = np.load("tests/multistart/{}.npy".format('G124.02'))
+    x = np.load("tests/ant_colony_optimization/evals10k/{}.npy".format('G1000.0025'))
     x = np.array(x,dtype="int")
     print(x)
 
 if __name__=="__main__":
-    tests()
+    load()
