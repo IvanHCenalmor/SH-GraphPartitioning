@@ -147,4 +147,8 @@ def improved_random_neighbor(graph, solution, part0, part1, cost):
                 part0[i0], part1[i1] = part1[i1], part0[i0]
                 return new_solution, new_cost
             
+            elif evals>max_evals: break
+        
+        if evals>max_evals: break
+            
     return np.array([]), 0

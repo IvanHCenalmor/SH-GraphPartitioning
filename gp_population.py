@@ -21,7 +21,7 @@ def ant_colony_opt(graph, generations, k_best, population_size, dissipation_fact
     assert population_size >= k_best
     assert population_size <= n
     
-    pheromones = np.ones((n,n))*(max_pheromone - min_pheromone)
+    pheromones = np.ones((n,n))*(max_pheromone - (max_pheromone-min_pheromone)/2)
     
     min_phe_matrix = np.ones((n,n))*min_pheromone
     max_phe_matrix = np.ones((n,n))*max_pheromone
@@ -54,7 +54,7 @@ def ant_colony_opt(graph, generations, k_best, population_size, dissipation_fact
         
         pheromones = np.maximum(min_phe_matrix, pheromones*(1 - dissipation_factor))
         pheromones = np.minimum(max_phe_matrix, pheromones+increment_pheromone(k_pop, k_costs, n, dissipation_factor)) 
-        
+    
     return best_sol, best_cost
 
 def ant_solution_queue(graph, pheromones, initial_vertex, beta, q, e = 0.1):
@@ -104,7 +104,7 @@ def increment_pheromone(solutions, costs, n, dissipation_factor):
         increment[sol[0], sol[-1]] += 1/c
     
     increment /= np.amax(increment)
-    increment *= 2*dissipation_factor
+    increment *= dissipation_factor
         
     increment += increment.transpose()
     
