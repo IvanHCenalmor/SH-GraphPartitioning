@@ -11,15 +11,12 @@ import random
 import math
 import numpy as np
 
-import time
 
 def local_search(graph, solution):
     
     cost = util.objective_function(graph,solution)
     part0 = np.where(~solution)[0]
     part1 = np.where(solution)[0]
-    
-    e = util.evals
     
     new_solution, new_cost = util.improved_random_neighbor(graph,solution,part0,part1,cost)
     

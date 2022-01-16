@@ -7,7 +7,6 @@ Created on Thu Nov 25 11:06:33 2021
 """
 
 from multiprocessing import Process, Queue
-import functools 
 import numpy as np 
 import math
 import random

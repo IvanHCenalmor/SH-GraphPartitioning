@@ -7,7 +7,6 @@ Created on Wed Nov 10 16:29:25 2021
 """
 import numpy as np
 import random
-import sys
 
 evals = 0
 max_evals = 10000

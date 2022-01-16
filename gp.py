@@ -19,53 +19,33 @@ datasets = ['Cebe.bip.n10.1','Cebe.bip.n10.2','Cebe.bip.n10.3','Cebe.bip.n10.4',
             'G.sub.500', 'G124.02', 'G124.16', 'G250.02', 'G250.04', 'G250.08', 'G500.04', 'G500.005',
             'G1000.02', 'G1000.005', 'G1000.0025']
 
-def main6():
-    for d in datasets:
-        n, graph = util.parser(d)
-        #n, graph = util.parser('Cebe.bip.n10.1')
-        init_time = time.time()
-        best_sol, best_cost = pop.ant_colony_opt(graph, generations=100, k_best=n//2, population_size=int(n*0.75), dissipation_factor=0.02, 
-                                                 beta=1, e = 0.1, min_pheromone = 0.1, max_pheromone = 1)
-        print('---{}---'.format(d))
-        print('Time: {}'.format(time.time() - init_time))
+datasets2 = ['Cebe.bip.n10.1','Cebe.bip.n10.2','Cebe.bip.n10.3','Cebe.bip.n10.4', 'Cebe.bip.n10.5',
+            'Cebe.bip.n20.1','Cebe.bip.n20.2','Cebe.bip.n20.3','Cebe.bip.n20.4', 'Cebe.bip.n20.5']
+        
+def brute_force():
+    for g_str in datasets2:
+        n, graph = util.parser(g_str)
+        
+        best_sol = [True]*(n//2)+[False]*(n//2)
+        best_cost = util.objective_function(graph, best_sol)
+        
+        
+        for positions in itertools.combinations(range(1,n),n//2-1):
+            p = [1] + [0]*(n-1)
+            
+            for i in positions:
+                p[i] = 1
+                
+            cost = util.objective_function(graph,p)
+            if cost < best_cost:
+                best_sol = p
+                best_cost = cost
+        
+    
+        print(g_str)
         print('Best solution: {}'.format(best_sol))
         print('Best cost: {}'.format(best_cost))
         print()
-
-def main5():
-    n, graph = util.parser('G250.02')
-    
-    normalized_graph = graph/np.amax(graph)
-    
-    for i in [0.005, 0.01,0.05,0.1,0.15]:
-        print(i)
-        init_time = time.time()
-        best_sol, _ = pop.ant_colony_opt(normalized_graph, generations=20, k_best=25, population_size=100, dissipation_factor=i, 
-                                                 beta=3/4, e = 0.1, min_pheromone = 0.05, max_pheromone = 1)
-        
-        best_sol = pop.permutation_to_solution(best_sol)       
-        best_cost = util.objective_function(graph, best_sol)
-        
-        print(best_cost)
-        print('Time: {}'.format(time.time() - init_time))
-        
-    
-def main4():
-    n, graph = util.parser('Cebe.bip.n10.2')
-    
-    best_sol = [True]*(n//2)+[False]*(n//2)
-    best_cost = util.objective_function(graph, best_sol)
-    
-    permutations = itertools.permutations(best_sol)
-    
-    for p in permutations:
-        cost = util.objective_function(graph,p)
-        if cost < best_cost:
-            best_sol = p
-            best_cost = cost
-
-    print('Best solution: {}'.format(best_sol))
-    print('Best cost: {}'.format(best_cost))
 
 def aco_test(g):
     
@@ -143,4 +123,4 @@ def load():
     print(x)
 
 if __name__=="__main__":
-    load()
+    tests()
